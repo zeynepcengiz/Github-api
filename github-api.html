@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub API Örneği</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0073e6;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }
+
+        #userInfo {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #userInfo h2 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        #userInfo p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #userInfo img {
+            border-radius: 50%;
+            margin: 10px 0;
+        }
+
+        #repoInfo {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #repoInfo h2 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        #repoInfo p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #repoInfo a {
+            color: #0073e6;
+            text-decoration: none;
+        }
+
+        #repoInfo a:hover {
+            text-decoration: underline;
+        }
+
+        #userInfo p,
+        #repoInfo p {
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>GitHub Kullanıcı Bilgisi</h1>
+
+    <input type="text" id="username" placeholder="GitHub Kullanıcı Adı">
+    <button id="getUser">Kullanıcı Bilgisi Al</button>
+    <div id="userInfo">
+    </div>
+    <script>
+        const getUserButton = document.getElementById('getUser');
+        const usernameInput = document.getElementById('username');
+        const userInfoDiv = document.getElementById('userInfo');
+
+        getUserButton.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            if (!username) {
+                alert('Lütfen bir kullanıcı adı girin!');
+                return;
+            }
+
+            const apiUrl = `https://api.github.com/users/${username}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const userData = await response.json();
+
+                userInfoDiv.innerHTML = `
+            <h2>${userData.login}</h2>
+            <img src="${userData.avatar_url}" alt="Avatar" width="100">
+            <p><strong>Ad:</strong> ${userData.name || 'Bilgi Yok'}</p>
+            <p><strong>Bio:</strong> ${userData.bio || 'Bilgi Yok'}</p>
+            <p><strong>Şehir:</strong> ${userData.location || 'Bilgi Yok'}</p>
+            <p><strong>GitHub Sayfası:</strong> <a href="${userData.html_url}" target="_blank">GitHub Profili</a></p>
+        `;
+            } catch (error) {
+                userInfoDiv.innerHTML = `<p>Hata oluştu: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+
+</html>
